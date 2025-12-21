@@ -205,6 +205,18 @@ class Detection:
         if not digit_present:
             if state == "closed":
                 return "closed", -1, {"grass_ratio": grass_ratio, "edge_ratio": edge_ratio}
+
+            digit, ratio, ratios_all = self.classify_digit_by_color(cell_bgr)
+
+            if digit is not None:
+                return "open_number", digit, {
+                    "grass_ratio": grass_ratio,
+                    "edge_ratio": edge_ratio,
+                    "digit_color_ratio": ratio,
+                    "ratios": ratios_all,
+                    "note": "digit found by color despite low edges"
+                }
+
             return "open_empty", 0, {"grass_ratio": grass_ratio, "edge_ratio": edge_ratio}
 
         digit, ratio, ratios_all = self.classify_digit_by_color(cell_bgr)

@@ -15,13 +15,13 @@ pyautogui.FAILSAFE = True
 pixel_area = {
     "small":  [735, 427, 450, 360],
     "medium": [690, 397, 540, 420],
-    # "hard": [...]
+    "hard": [660, 357, 600, 500]
 }
 
 field_count = {
     "small":  [10, 8],
     "medium": [18, 14],
-    # "hard": [24, 20]  # пример, если понадобится
+    "hard": [24, 20]  # пример, если понадобится
 }
 
 total_mines = {"small": 10, "medium": 40, "hard": 99}
@@ -102,13 +102,14 @@ def run_game(preset: str, save_debug=False, pre_start_delay=2.0):
 
         # Ты хотел не ограничивать actions — ок.
         # На практике можно оставить так: все безопасные клики подряд.
-        for a in actions:
+        for a in actions[:5]:
             print("NEXT:", a)
-            click_action(a, pre_delay=0.01, post_delay=0.01)
+            click_action(a, pre_delay=0.00, post_delay=0.00)
 
     print("Reached max_moves — stop.")
 
 # -------------------- entry --------------------
 
 if __name__ == "__main__":
-    run_game("medium", save_debug=False, pre_start_delay=2.0)
+    # small medium hard
+    run_game("hard", save_debug=False, pre_start_delay=2.0)
