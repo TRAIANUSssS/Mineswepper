@@ -1,12 +1,12 @@
 import time
 import pyautogui
 
-from detect_fields import Detection
-from get_field import screenshot_region, split_grid_np
-from board_reader import update_board_from_grid
-from solver import solver_step_left_only, Action
-from debug_prints import print_field, print_mines, print_actions
-from clicker import click_action
+from adapters.vision.detect_fields import Detection
+from adapters.vision.get_field import screenshot_region, split_grid_np
+from adapters.vision.board_reader import update_board_from_grid
+from core.solver import solver_step, Action
+from utils.debug_prints import print_field, print_mines, print_actions
+from adapters.vision.clicker import click_action
 
 pyautogui.FAILSAFE = True
 
@@ -41,7 +41,7 @@ def center_action(LEFT, TOP, WIDTH, HEIGHT, COLS, ROWS) -> Action:
     cell_h = HEIGHT / ROWS
     x = int(LEFT + (c + 0.5) * cell_w)
     y = int(TOP + (r + 0.5) * cell_h)
-    return Action(kind="left", x=x, y=y, r=r, c=c, reason="START: click center")
+    return Action(kind="left", r=r, c=c, reason="START: click center")
 
 def capture_and_solve(preset: str, detection: Detection, field_prev=None, mine_prev=None, save_debug=False):
     """
@@ -67,12 +67,7 @@ def capture_and_solve(preset: str, detection: Detection, field_prev=None, mine_p
     if is_all_closed(field):
         return field, mine, [center_action(LEFT, TOP, WIDTH, HEIGHT, COLS, ROWS)]
 
-    actions, changed = solver_step_left_only(
-        field, mine,
-        LEFT, TOP, WIDTH, HEIGHT,
-        COLS, ROWS,
-        total_mines=total_mines.get(preset)
-    )
+    actions, changed = solver_step(field, mine, total_mines=total_mines.get(preset))
     return field, mine, actions
 
 def run_game(preset: str, save_debug=False, pre_start_delay=2.0):
@@ -102,9 +97,14 @@ def run_game(preset: str, save_debug=False, pre_start_delay=2.0):
 
         # Ты хотел не ограничивать actions — ок.
         # На практике можно оставить так: все безопасные клики подряд.
+
+        LEFT, TOP, WIDTH, HEIGHT = pixel_area[preset]
+        COLS, ROWS = field_count[preset]
+
+
         for a in actions[:5]:
             print("NEXT:", a)
-            click_action(a, pre_delay=0.00, post_delay=0.00)
+            click_action(a, LEFT, TOP, WIDTH, HEIGHT, COLS, ROWS, pre_delay=0.01, post_delay=0.01)
 
     print("Reached max_moves — stop.")
 
@@ -112,4 +112,4 @@ def run_game(preset: str, save_debug=False, pre_start_delay=2.0):
 
 if __name__ == "__main__":
     # small medium hard
-    run_game("hard", save_debug=False, pre_start_delay=2.0)
+    run_game("medium", save_debug=False, pre_start_delay=2.0)

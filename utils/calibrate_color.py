@@ -71,4 +71,4 @@ def calibrate_from_alpha(images_dir="images", digits=range(1, 9),
     print(f"\nSaved: {out_json}")
 
 if __name__ == "__main__":
-    calibrate_from_alpha(images_dir="images", out_json="digit_hsv_ranges.json")
+    calibrate_from_alpha(images_dir="../images", out_json="digit_hsv_ranges.json")

@@ -14,7 +14,13 @@ def print_mines(mine):
 def print_actions(actions, limit=10):
     print("\nACTIONS:")
     if not actions:
-        print("No deterministic action found.")
+        print("No actions found.")
         return
+
     for a in actions[:limit]:
-        print(a.kind, (a.x, a.y), "cell", (a.r, a.c), "-", a.reason)
+        risk = getattr(a, "risk", None)
+        if risk is None:
+            print(a.kind, "cell", (a.r, a.c), "-", a.reason)
+        else:
+            print(a.kind, "cell", (a.r, a.c), f"risk={risk:.3f}", "-", a.reason)
+

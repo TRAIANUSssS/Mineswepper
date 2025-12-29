@@ -1,7 +1,7 @@
 import cv2
 from typing import List, Tuple, Optional
 
-from detect_fields import Detection
+from adapters.vision.detect_fields import Detection
 
 
 def update_board_from_grid(
